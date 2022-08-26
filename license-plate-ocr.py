@@ -21,9 +21,9 @@ if __name__ == '__main__':
 
 		ocr_threshold = .4
 
-		ocr_weights = 'data/ocr/ocr-net.weights'
-		ocr_netcfg  = 'data/ocr/ocr-net.cfg'
-		ocr_dataset = 'data/ocr/ocr-net.data'
+		ocr_weights = 'data/ocr/yolo-obj.weights'
+		ocr_netcfg  = 'data/ocr/yolo-obj.cfg'
+		ocr_dataset = 'data/ocr/yolo-obj.data'
 
 		ocr_net  = dn.load_net(ocr_netcfg.encode('utf-8'), ocr_weights.encode('utf-8'), 0)
 		ocr_meta = dn.load_meta(ocr_dataset.encode('utf-8'))
