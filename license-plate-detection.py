@@ -3,9 +3,10 @@ import keras
 import cv2
 import traceback
 
+from src.keras_utils			import load_model, detect_lp
+from src.utils					import im2single
 from glob 						import glob
 from os.path 					import splitext, basename
-from src.local_utils			import load_model, detect_lp
 from src.label 					import Shape, writeShapes
 
 
@@ -16,9 +17,10 @@ def adjust_pts(pts,lroi):
 if __name__ == '__main__':
 
 	try:
-		
 		input_dir  = sys.argv[1]
-		output_dir = input_dir
+		output_dir = input_dir+"/output"
+		if not os.path.exists(output_dir):
+			os.mkdir(output_dir)
 
 		lp_threshold = .5
 
@@ -37,11 +39,11 @@ if __name__ == '__main__':
 			Ivehicle = cv2.imread(img_path)
 
 			ratio = float(max(Ivehicle.shape[:2]))/min(Ivehicle.shape[:2])
-			side  = int(ratio * 288)
+			side  = int(ratio * 288.)
 			bound_dim = min(side + (side%(2**4)), 608)
 			print(("\t\tBound dim: %d, ratio: %f" % (bound_dim,ratio)))
 
-			Llp,LlpImgs,_, = detect_lp(wpod_net,Ivehicle,bound_dim,lp_threshold)
+			Llp,LlpImgs,_, = detect_lp(wpod_net,im2single(Ivehicle),bound_dim,2**4,(160,160),lp_threshold)
 
 			if len(LlpImgs):
 				Ilp = LlpImgs[0]
