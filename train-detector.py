@@ -1,10 +1,10 @@
-
 import sys
 import numpy as np
 import cv2
 import argparse
 import keras
-import tensorflow
+import tensorflow as tf
+
 from random import choice
 from os.path import isfile, isdir, basename, splitext
 from os import makedirs
@@ -48,10 +48,10 @@ def process_data_item(data_item,dim,model_stride):
 
 
 if __name__ == '__main__':
-	config = tensorflow.compat.v1.ConfigProto( device_count = {'GPU': 2 , 'CPU': 16} ) 
+	config = tf.compat.v1.ConfigProto( device_count = {'GPU': 2 , 'CPU': 16} ) 
 	config.gpu_options.allow_growth = True
-	sess = tensorflow.compat.v1.Session(config=config) 
-	tensorflow.compat.v1.keras.backend.set_session(sess)
+	sess = tf.compat.v1.Session(config=config) 
+	tf.compat.v1.keras.backend.set_session(sess)
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-m' 		,'--model'			,type=str   , required=True		,help='Path to previous model')
 	parser.add_argument('-n' 		,'--name'			,type=str   , required=True		,help='Model name')
@@ -76,23 +76,23 @@ if __name__ == '__main__':
 
 	model,model_stride,xshape,yshape = load_network(args.model,dim)
 
-	opt = getattr(keras.optimizers,args.optimizer)(lr=args.learning_rate)
-	model.compile(loss=loss, optimizer=opt)
+	opt = getattr(tf.keras.optimizers,args.optimizer)(lr=args.learning_rate)
+	model.compile(loss=loss, optimizer=opt, metrics=['acc'])
 
 	print('Checking input directory...')
-	Files = image_files_from_folder(train_dir)
+	Files_train = image_files_from_folder(train_dir)
 
-	Data = []
-	for file in Files:
+	Data_train = []
+	for file in Files_train:
 		labfile = splitext(file)[0] + '.txt'
 		if isfile(labfile):
 			L = readShapes(labfile)
 			I = cv2.imread(file)
-			Data.append([I,L[0]])
+			Data_train.append([I,L[0]])
 
-	print('%d images with labels found' % len(Data))
+	print(('%d train images with labels found' % len(Data_train)))
 
-	dg = DataGenerator(	data=Data, \
+	dg = DataGenerator(	data=Data_train, \
 						process_data_item_func=lambda x: process_data_item(x,dim,model_stride),\
 						xshape=xshape, \
 						yshape=(yshape[0],yshape[1],yshape[2]+1), \
@@ -103,26 +103,46 @@ if __name__ == '__main__':
 
 	Xtrain = np.empty((batch_size,dim,dim,3),dtype='single')
 	Ytrain = np.empty( ( int(batch_size), int(dim/model_stride), int(dim/model_stride), int(2*4+1) ))
-
+	
 	model_path_backup = '%s/%s_backup' % (outdir,netname)
 	model_path_final  = '%s/%s_final'  % (outdir,netname)
+	
+	history = model.fit(Xtrain, Ytrain, batch_size=batch_size, epochs=10000)
 
-	for it in range(iterations):
+	# for it in range(iterations):
+	# 	train_accuracy = []
+	# 	train_loss = []
+	# 	test_accuracy = []
+	# 	test_loss = []
+	# 	print(('Iter. %d (of %d)' % (it+1,iterations)))
 
-		print('Iter. %d (of %d)' % (it+1,iterations))
+	# 	Xtrain,Ytrain = dg1.get_batch(batch_size)
+	# 	Xtest,Ytest = dg2.get_batch(batch_size)
 
-		Xtrain,Ytrain = dg.get_batch(batch_size)
-		train_loss = model.train_on_batch(Xtrain,Ytrain)
+	# 	tr_loss, tr_acc = model.train_on_batch(Xtrain,Ytrain)
+	# 	train_accuracy.append(tr_acc)
+	# 	train_loss.append(tr_loss)
 
-		print('\tLoss: %f' % train_loss)
+	# 	te_loss, te_acc = model.test_on_batch(Xtest, Ytest)
+	# 	test_accuracy.append(te_acc)
+	# 	test_loss.append(te_acc)
 
-		# Save model every 1000 iterations
-		if (it+1) % 1000 == 0:
-			print('Saving model (%s)' % model_path_backup)
-			save_model(model,model_path_backup)
+	# 	print("Train loss: {}\nTrain accuracy: {}".format(tr_loss, tr_acc))
+	# 	print("Test loss: {}\nTest accuracy: {}".format(te_loss, te_acc))
+	# 	print('--------------------------------------------------------------')
+	# 	# print(('\tTrain loss: %f' % train_loss))
+	# 	# print(('\tTest loss: %f' % test_loss))
+		
+	# 	# print(train_loss)
+	# 	# print(test_loss)
 
-	print('Stopping data generator')
+	# 	# Save model every 1000 iterations
+	# 	if (it+1) % 1000 == 0:
+	# 		print(('Saving model (%s)' % model_path_backup))
+	# 		save_model(model,model_path_backup)
+
+	print('Stopping data train generator')
 	dg.stop()
 
-	print('Saving model (%s)' % model_path_final)
+	print(('Saving model (%s)' % model_path_final))
 	save_model(model,model_path_final)

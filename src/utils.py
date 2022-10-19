@@ -34,7 +34,7 @@ def IOU_centre_and_dims(cc1,wh1,cc2,wh2):
 	return IOU(cc1-wh1/2.,cc1+wh1/2.,cc2-wh2/2.,cc2+wh2/2.)
 
 
-def nms(Labels,iou_threshold=.5):
+def nms(Labels,iou_threshold=0.5):
 
 	SelectedLabels = []
 	Labels.sort(key=lambda l: l.prob(),reverse=True)
