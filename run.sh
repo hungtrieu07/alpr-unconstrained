@@ -30,7 +30,7 @@ then
 	exit 1
 fi
 
-lp_model="/home/hungtrieu07/Downloads/wpod-model/my-trained-model_final.h5"
+lp_model="/content/alpr-unconstrained/data/lp-detector/wpod-net_update1.h5"
 input_dir=''
 output_dir=''
 csv_file=''
