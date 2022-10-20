@@ -22,12 +22,12 @@ if __name__ == '__main__':
 
 		vehicle_threshold = .5
 
-		# vehicle_weights = 'data/vehicle-detector/yolo-voc.weights'
-		# vehicle_netcfg  = 'data/vehicle-detector/yolo-voc.cfg'
-		# vehicle_dataset = 'data/vehicle-detector/voc.data'
-		vehicle_weights = 'data/vehicle-detector/yolov2.weights'
-		vehicle_netcfg  = 'data/vehicle-detector/yolov2.cfg'
-		vehicle_dataset = 'data/vehicle-detector/coco.data'
+		vehicle_weights = 'data/vehicle-detector/yolo-voc.weights'
+		vehicle_netcfg  = 'data/vehicle-detector/yolo-voc.cfg'
+		vehicle_dataset = 'data/vehicle-detector/voc.data'
+		# vehicle_weights = 'data/vehicle-detector/yolov2.weights'
+		# vehicle_netcfg  = 'data/vehicle-detector/yolov2.cfg'
+		# vehicle_dataset = 'data/vehicle-detector/coco.data'
 
 		vehicle_net  = dn.load_net(vehicle_netcfg.encode('utf-8'), vehicle_weights.encode('utf-8'), 0)
 		vehicle_meta = dn.load_meta(vehicle_dataset.encode('utf-8'))
