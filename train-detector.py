@@ -155,10 +155,10 @@ if __name__ == '__main__':
     test_accuracy = 0.0
 
     for it in range(iterations):
-		train_loss = []
-    	test_loss = []
-    	train_acc = []
-    	test_acc = []
+        train_loss = []
+        test_loss = []
+        train_acc = []
+        test_acc = []
 	
         print(('Iter. %d (of %d)' % (it+1,iterations)))
 
@@ -167,19 +167,19 @@ if __name__ == '__main__':
 
         tr_loss, tr_acc = model.train_on_batch(Xtrain,Ytrain)
         train_accuracy += tr_acc
-		train_acc.append(train_accuracy)
+        train_acc.append(train_accuracy)
         train_loss.append(tr_loss)
 
         te_loss, te_acc = model.test_on_batch(Xtest, Ytest)
         test_accuracy += te_acc
-		test_acc.append(test_accuracy)
+        test_acc.append(test_accuracy)
         test_loss.append(te_acc)
 
-        tb.on_epoch_end(it, {'train_loss': tr_loss, 'train_acc': tr_acc})
-        tb.on_epoch_end(it, {'test_loss': te_loss, 'test_acc': te_acc})
+        tb.on_epoch_end(it, {'train_loss': tr_loss, 'train_acc': train_accuracy})
+        tb.on_epoch_end(it, {'test_loss': te_loss, 'test_acc': test_accuracy})
 
-        print('epoch', it, 'train_loss:', tr_loss, 'train_acc:', tr_acc)
-        print('epoch', it, 'test_loss:', te_loss, 'test_acc:', te_acc)
+        print('epoch', it, 'train_loss:', tr_loss, 'train_acc:', train_accuracy)
+        print('epoch', it, 'test_loss:', te_loss, 'test_acc:', test_accuracy)
 
 		# Save model every 1000 iterations
         if (it+1) % 1000 == 0:
