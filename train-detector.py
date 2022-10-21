@@ -153,25 +153,24 @@ if __name__ == '__main__':
 
     train_accuracy = 0.0
     test_accuracy = 0.0
-    train_loss = []
-    test_loss = []
-    train_acc = []
-    test_acc = []
 
     for it in range(iterations):
+		train_loss = []
+    	test_loss = []
+    	train_acc = []
+    	test_acc = []
+	
         print(('Iter. %d (of %d)' % (it+1,iterations)))
 
         Xtrain,Ytrain = dg1.get_batch(batch_size)
         Xtest,Ytest = dg2.get_batch(batch_size)
 
         tr_loss, tr_acc = model.train_on_batch(Xtrain,Ytrain)
-        train_accuracy += tr_acc
-        train_acc.append(train_accuracy)
+        train_accuracy.append(tr_acc)
         train_loss.append(tr_loss)
 
         te_loss, te_acc = model.test_on_batch(Xtest, Ytest)
-        test_accuracy += te_acc
-        test_acc.append(test_accuracy)
+        test_accuracy.append(te_acc)
         test_loss.append(te_acc)
 
         tb.on_epoch_end(it, {'train_loss': tr_loss, 'train_acc': tr_acc})
@@ -188,22 +187,6 @@ if __name__ == '__main__':
     print('Stopping data train generator')
     dg1.stop()
     dg2.stop()
-    print("Plotting model loss and accuracy...")
-
-    x = [x+1 for x in range(iterations)]
-    default_x_ticks = range(len(x))
-    plt.xticks(default_x_ticks, x)
-
-    figure, axis = plt.subplots(1, 2)
-    axis[0, 0].plot(train_loss, '-o', label="Train")
-    axis[0, 0].plot(test_loss, '-o', label="Test")
-    axis[0, 0].legend()
-
-    axis[0, 1].plot(train_acc, '-o', label="Train")
-    axis[0, 1].plot(test_acc, '-o', label="Test")
-    axis[0, 1].legend()
-    
-    plt.savefig("/content/drive/MyDrive/output.png")
 
     print(('Saving model (%s)' % model_path_final))
     save_model(model,model_path_final)
