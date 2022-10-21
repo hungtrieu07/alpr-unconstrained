@@ -166,11 +166,13 @@ if __name__ == '__main__':
         Xtest,Ytest = dg2.get_batch(batch_size)
 
         tr_loss, tr_acc = model.train_on_batch(Xtrain,Ytrain)
-        train_accuracy.append(tr_acc)
+        train_accuracy += tr_acc
+		train_acc.append(train_accuracy)
         train_loss.append(tr_loss)
 
         te_loss, te_acc = model.test_on_batch(Xtest, Ytest)
-        test_accuracy.append(te_acc)
+        test_accuracy += te_acc
+		test_acc.append(test_accuracy)
         test_loss.append(te_acc)
 
         tb.on_epoch_end(it, {'train_loss': tr_loss, 'train_acc': tr_acc})
