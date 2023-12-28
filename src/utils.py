@@ -38,15 +38,13 @@ def nms(Labels,iou_threshold=.5):
 
 	SelectedLabels = []
 	Labels.sort(key=lambda l: l.prob(),reverse=True)
-	
+
 	for label in Labels:
 
-		non_overlap = True
-		for sel_label in SelectedLabels:
-			if IOU_labels(label,sel_label) > iou_threshold:
-				non_overlap = False
-				break
-
+		non_overlap = all(
+			IOU_labels(label, sel_label) <= iou_threshold
+			for sel_label in SelectedLabels
+		)
 		if non_overlap:
 			SelectedLabels.append(label)
 
@@ -57,9 +55,9 @@ def image_files_from_folder(folder,upper=True):
 	extensions = ['jpg','jpeg','png']
 	img_files  = []
 	for ext in extensions:
-		img_files += glob('%s/*.%s' % (folder,ext))
+		img_files += glob(f'{folder}/*.{ext}')
 		if upper:
-			img_files += glob('%s/*.%s' % (folder,ext.upper()))
+			img_files += glob(f'{folder}/*.{ext.upper()}')
 	return img_files
 
 

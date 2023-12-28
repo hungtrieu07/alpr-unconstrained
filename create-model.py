@@ -11,7 +11,7 @@ from src.keras_utils import save_model
 
 def res_block(x,sz,filter_sz=3,in_conv_size=1):
 	xi  = x
-	for i in range(in_conv_size):
+	for _ in range(in_conv_size):
 		xi  = Conv2D(sz, filter_sz, activation='linear', padding='same')(xi)
 		xi  = BatchNormalization()(xi)
 		xi 	= Activation('relu')(xi)
@@ -69,21 +69,23 @@ def create_model_mobnet():
 	x = input_layer
 
 	mbnet = MobileNet(input_shape=(224,224,3),include_top=True)
-	
+
 	backbone = keras.models.clone_model(mbnet)
-	for i,bblayer in enumerate(backbone.layers[1:74]):
+	for bblayer in backbone.layers[1:74]:
 		layer = bblayer.__class__.from_config(bblayer.get_config())
-		layer.name = 'backbone_' + layer.name
+		layer.name = f'backbone_{layer.name}'
 		x = layer(x)
 
 	x = end_block(x)
 
 	model = Model(inputs=input_layer,outputs=x)
 
-	backbone_layers = {'backbone_' + layer.name: layer for layer in backbone.layers}
+	backbone_layers = {
+		f'backbone_{layer.name}': layer for layer in backbone.layers
+	}
 	for layer in model.layers:
 		if layer.name in backbone_layers:
-			print(('setting ' + layer.name))
+			print(f'setting {layer.name}')
 			layer.set_weights(backbone_layers[layer.name].get_weights())
 
 	return model
@@ -93,15 +95,16 @@ if __name__ == '__main__':
 
 	modules = [func.replace('create_model_','') for func in dir(sys.modules[__name__]) if 'create_model_' in func]
 
-	assert sys.argv[1] in modules, \
-		'Model name must be on of the following: %s' % ', '.join(modules)
+	assert (
+		sys.argv[1] in modules
+	), f"Model name must be on of the following: {', '.join(modules)}"
 
-	modelf = getattr(sys.modules[__name__],'create_model_' + sys.argv[1])
-	
-	print(('Creating model %s' % sys.argv[1]))
+	modelf = getattr(sys.modules[__name__], f'create_model_{sys.argv[1]}')
+
+	print(f'Creating model {sys.argv[1]}')
 	model = modelf()
 	print ('Finished')
 
-	print (('Saving at %s' % sys.argv[2]))
+	print(f'Saving at {sys.argv[2]}')
 	save_model(model,sys.argv[2])
 

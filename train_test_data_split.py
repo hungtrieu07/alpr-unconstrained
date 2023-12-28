@@ -37,13 +37,13 @@ def iterate_dir(source, dest, ratio, copy_txt):
     num_images = len(images)
     num_test_images = math.ceil(ratio*num_images)
 
-    for i in range(num_test_images):
+    for _ in range(num_test_images):
         idx = random.randint(0, len(images)-1)
         filename = images[idx]
         copyfile(os.path.join(source, filename),
                  os.path.join(test_dir, filename))
         if copy_txt:
-            txt_filename = os.path.splitext(filename)[0]+'.txt'
+            txt_filename = f'{os.path.splitext(filename)[0]}.txt'
             copyfile(os.path.join(source, txt_filename),
                      os.path.join(test_dir,txt_filename))
         images.remove(images[idx])
@@ -52,7 +52,7 @@ def iterate_dir(source, dest, ratio, copy_txt):
         copyfile(os.path.join(source, filename),
                  os.path.join(train_dir, filename))
         if copy_txt:
-            txt_filename = os.path.splitext(filename)[0]+'.txt'
+            txt_filename = f'{os.path.splitext(filename)[0]}.txt'
             copyfile(os.path.join(source, txt_filename),
                      os.path.join(train_dir, txt_filename))
 
