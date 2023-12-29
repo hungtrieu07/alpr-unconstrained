@@ -25,11 +25,11 @@ for img_file in img_files:
 
 	I = cv2.imread(img_file)
 
-	detected_cars_labels = '%s/%s_cars.txt' % (output_dir,bname)
+	detected_cars_labels = f'{output_dir}/{bname}_cars.txt'
 
 	Lcar = lread(detected_cars_labels)
 
-	sys.stdout.write('%s' % bname)
+	sys.stdout.write(f'{bname}')
 
 	if Lcar:
 
@@ -53,9 +53,9 @@ for img_file in img_files:
 					llp = Label(0,tl=pts.min(1),br=pts.max(1))
 					write2img(I,llp,lp_str)
 
-					sys.stdout.write(',%s' % lp_str)
+					sys.stdout.write(f',{lp_str}')
 
-	cv2.imwrite('%s/%s_output.png' % (output_dir,bname),I)
+	cv2.imwrite(f'{output_dir}/{bname}_output.png', I)
 	sys.stdout.write('\n')
 
 

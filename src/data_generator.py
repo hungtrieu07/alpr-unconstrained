@@ -76,7 +76,7 @@ class DataGenerator(object):
 
 	def start(self):
 		self._stop = False
-		self._threads = [Thread(target=self._run) for n in range(self._nthreads)]
+		self._threads = [Thread(target=self._run) for _ in range(self._nthreads)]
 		for thread in self._threads:
 			thread.setDaemon(True)
 			thread.start()

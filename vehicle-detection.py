@@ -16,7 +16,7 @@ import datetime
 if __name__ == '__main__':
 
 	try:
-	
+
 		input_dir  = sys.argv[1]
 		output_dir = sys.argv[2]
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
 					cv2.imwrite('%s/%s_%dcar.png' % (output_dir,bname,i),Icar)
 
-				lwrite('%s/%s_cars.txt' % (output_dir,bname),Lcars)
+				lwrite(f'{output_dir}/{bname}_cars.txt', Lcars)
 			stop = datetime.datetime.now()
 			print(stop-start)
 

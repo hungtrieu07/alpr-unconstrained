@@ -20,15 +20,15 @@ if __name__ == '__main__':
 	try:
 		
 		input_dir  = sys.argv[1]
-		output_dir = input_dir+"/output"
+		output_dir = f"{input_dir}/output"
 		if not os.path.exists(output_dir):
-			os.mkdir(output_dir)		
+			os.mkdir(output_dir)
 		lp_threshold = .5
 
 		wpod_net_path = sys.argv[2]
 		wpod_net = load_model(wpod_net_path)
 
-		imgs_paths = glob('%s/*.png' % input_dir)
+		imgs_paths = glob(f'{input_dir}/*.png')
 
 		print ('Searching for license plates using WPOD-NET')
 
@@ -53,8 +53,8 @@ if __name__ == '__main__':
 
 				s = Shape(Llp[0].pts)
 
-				cv2.imwrite('%s/%s_lp.png' % (output_dir,bname),Ilp*255.)
-				writeShapes('%s/%s_lp.txt' % (output_dir,bname),[s])
+				cv2.imwrite(f'{output_dir}/{bname}_lp.png', Ilp*255.)
+				writeShapes(f'{output_dir}/{bname}_lp.txt', [s])
 			stop = datetime.datetime.now()
 			print(stop-start)
 

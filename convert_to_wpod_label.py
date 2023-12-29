@@ -5,7 +5,7 @@ path = "/home/hungtrieu07/Downloads/LP_detection/images/val/"
 os.chdir(path)
 
 for filename in glob.glob('*.txt'):
-    image = cv2.imread(os.path.splitext(filename)[0] + '.jpg')
+    image = cv2.imread(f'{os.path.splitext(filename)[0]}.jpg')
     height = image.shape[0]
     width = image.shape[1]
 
@@ -32,10 +32,9 @@ for filename in glob.glob('*.txt'):
     bl_x = f'{x1:6f}'
     bl_y = f'{y2:6f}'
 
-    output = '4,' + str(tl_x) + "," + str(tr_x) + "," + str(br_x) + "," + str(bl_x) + "," + str(tl_y) + "," + str(tr_y) + "," + str(br_y) + "," + str(bl_y) + ',,'
+    output = f'4,{str(tl_x)},{str(tr_x)},{str(br_x)},{str(bl_x)},{str(tl_y)},{str(tr_y)},{str(br_y)},{str(bl_y)},,'
 
-    fo = open(filename, 'w')
-    fo.write(output)
-    print('Writing to %s' % filename)
-    fo.close()
+    with open(filename, 'w') as fo:
+        fo.write(output)
+        print(f'Writing to {filename}')
 

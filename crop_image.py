@@ -10,7 +10,7 @@ TXT_PATH = "/home/hungtrieu07/Downloads/plate_trinam/txt_plate_trinam/"
 if __name__ == '__main__':
     try:
 
-        for imgfile in blob.blob(TXT_PATH + ".jpg"):
+        for imgfile in blob.blob(f"{TXT_PATH}.jpg"):
 
             image = cv2.imread(imgfile)
             height = image.shape[0]

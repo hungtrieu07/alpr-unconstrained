@@ -15,7 +15,7 @@ import datetime
 if __name__ == '__main__':
 
 	try:
-	
+
 		input_dir  = sys.argv[1]
 		output_dir = input_dir
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
 		ocr_net  = dn.load_net(ocr_netcfg.encode('utf-8'), ocr_weights.encode('utf-8'), 0)
 		ocr_meta = dn.load_meta(ocr_dataset.encode('utf-8'))
 
-		imgs_paths = sorted(glob('%s/*lp.png' % output_dir))
+		imgs_paths = sorted(glob(f'{output_dir}/*lp.png'))
 
 		print ('Performing OCR...')
 
@@ -48,7 +48,7 @@ if __name__ == '__main__':
 				L.sort(key=lambda x: x.tl()[0])
 				lp_str = ''.join([chr(l.cl()) for l in L])
 
-				with open('%s/%s_str.txt' % (output_dir,bname),'w') as f:
+				with open(f'{output_dir}/{bname}_str.txt', 'w') as f:
 					f.write(lp_str + '\n')
 
 				print ('\t\tLP: %s' % lp_str)

@@ -74,13 +74,14 @@ class ShapeDisplay(Shape):
 def rotation_transform(wh,angles=np.array([0.,0.,0.]),zcop=1000., dpp=1000.):
 	rads = np.deg2rad(angles)
 
-	a = rads[0]; Rx = np.matrix([[1, 0, 0]				, [0, cos(a), sin(a)]	, [0, -sin(a), cos(a)]	])
-	a = rads[1]; Ry = np.matrix([[cos(a), 0, -sin(a)]	, [0, 1, 0]				, [sin(a), 0, cos(a)]	])
-	a = rads[2]; Rz = np.matrix([[cos(a), sin(a), 0]	, [-sin(a), cos(a), 0]	, [0, 0, 1]				])
+	a = rads[0]
+	Rx = np.matrix([[1, 0, 0]				, [0, cos(a), sin(a)]	, [0, -sin(a), cos(a)]	])
+	a = rads[1]
+	Ry = np.matrix([[cos(a), 0, -sin(a)]	, [0, 1, 0]				, [sin(a), 0, cos(a)]	])
+	a = rads[2]
+	Rz = np.matrix([[cos(a), sin(a), 0]	, [-sin(a), cos(a), 0]	, [0, 0, 1]				])
 
-	R = Rx*Ry*Rz;
-
-	return R
+	return Rx*Ry*Rz
 
 class Display():
 
@@ -206,16 +207,15 @@ class Display():
 		self.mouse_center = (mc[:2]/mc[2])/getWH(self.Iorig.shape)
 
 def selectClosest(shapes,pt):
-	if len(shapes):
-		mindist,selected = shapes[0].distanceTo(pt).min(),0
-		for i,shape in enumerate(shapes[1:]):
-			shpdist = shape.distanceTo(pt).min()
-			if mindist > shpdist:
-				selected = i+1
-				mindist = shpdist
-		return selected
-	else:
+	if not len(shapes):
 		return -1
+	mindist,selected = shapes[0].distanceTo(pt).min(),0
+	for i,shape in enumerate(shapes[1:]):
+		shpdist = shape.distanceTo(pt).min()
+		if mindist > shpdist:
+			selected = i+1
+			mindist = shpdist
+	return selected
 
 def displayAllShapes(disp,shapes,selected,typing_mode):
 	for i,shape in enumerate(shapes):
@@ -276,26 +276,26 @@ if __name__ == '__main__':
 	action_keys = [key_exit,key_previous] + key_next
 
 	curr_image = 0
+	zoom_factor = 1.
+
 	while curr_image < len(img_files):
 
 		img_file = img_files[curr_image]
 
-		lab_file = splitext(img_file)[0] + '.txt'
+		lab_file = f'{splitext(img_file)[0]}.txt'
 
 		if isfile(lab_file):
 			shapes = readShapes(lab_file,obj_type=ShapeDisplay)
 			selected = len(shapes) - 1
 		else:
 			shapes,selected = [ShapeDisplay()],0
-		
-		zoom_factor = 1.
 
 		disp = Display(cv2.imread(img_file),maxW,maxH)
 		disp.show()
 		key = disp.waitKey()
 		typing_mode = False
 
-		while not key in action_keys:
+		while key not in action_keys:
 			disp.resetDisplay()
 			displayAllShapes(disp,shapes,selected,typing_mode)
 			disp.show()
@@ -304,14 +304,13 @@ if __name__ == '__main__':
 			if typing_mode:
 				if key == key_typing_mode:
 					typing_mode = False
-				else:
-					if key != 255:
-						if key >= 176:
-							key = key - 176 + 48
-						if key == BACKSPACE: # backspace
-							shapes[selected].text = shapes[selected].text[:-1]
-						else:
-							shapes[selected].text += str(chr(key)).upper()
+				elif key != 255:
+					if key >= 176:
+						key = key - 176 + 48
+					if key == BACKSPACE: # backspace
+						shapes[selected].text = shapes[selected].text[:-1]
+					else:
+						shapes[selected].text += chr(key).upper()
 				key = 255
 				continue
 
@@ -372,7 +371,7 @@ if __name__ == '__main__':
 				print ('Select closest')
 				pt = disp.getMouseCenterRelative()
 				selected = selectClosest(shapes,pt)
-					
+
 		if key == key_exit:
 			sys.exit()
 
@@ -380,4 +379,3 @@ if __name__ == '__main__':
 			writeShapes(lab_file,shapes)
 			curr_image += 1 if key in key_next else -1
 			curr_image = max(curr_image,0)
-			continue

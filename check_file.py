@@ -5,8 +5,8 @@ os.chdir(path)
 
 for filename in glob.glob('*.txt'):
     # print(filename)
-    if(os.stat(filename).st_size == 0):
-        os.remove(os.path.splitext(filename)[0] + '.jpg')
+    if (os.stat(filename).st_size == 0):
+        os.remove(f'{os.path.splitext(filename)[0]}.jpg')
         os.remove(filename)
 
     # print(filename)

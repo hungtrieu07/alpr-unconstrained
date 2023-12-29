@@ -109,7 +109,7 @@ class Shape():
 		fp.write('%d,' % self.pts.shape[1])
 		ptsarray = self.pts.flatten()
 		fp.write(''.join([('%f,' % value) for value in ptsarray]))
-		fp.write('%s,' % self.text)
+		fp.write(f'{self.text},')
 		fp.write('\n')
 
 	def read(self,line):
